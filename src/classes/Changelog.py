@@ -199,7 +199,11 @@ changelog = colorText.BOLD + '[ChangeLog]\n' + colorText.END + colorText.BLUE + 
 [1.45]
 1. Minor bug fixes after dependency change
 
+[1.46]
+1. TA-Lib reanabled. Dockerized for better distribution of the tool
+
 [2.00]
 1. Streamlit UI added
+2. Multi-arch CPU Docker enabled
 --- END ---
 ''' + colorText.END

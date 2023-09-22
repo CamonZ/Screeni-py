@@ -202,6 +202,8 @@ class tools:
 
     # Save screened results to excel
     def promptSaveResults(df):
+        if isDocker():  # Skip export to excel inside docker
+            return
         try:
             response = str(input(colorText.BOLD + colorText.WARN +
                                  '[>] Do you want to save the results in excel file? [Y/N]: ')).upper()
@@ -356,3 +358,8 @@ class tools:
         for i in range(beeps):
             print('\a')
             sleep(delay)
+
+def isDocker():
+    if '/opt/program/' in os.getcwd():
+        return True
+    return False

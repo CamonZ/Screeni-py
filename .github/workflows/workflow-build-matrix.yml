@@ -14,7 +14,7 @@ on:
 jobs:
 
   # Job for builing packages
-  Build:
+  Build_Executables:
     name: Build Packages
     #needs: Create-Release
     runs-on: ${{ matrix.os }}
@@ -65,7 +65,7 @@ jobs:
             FILE_NAME: screenipy.run
           
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Get the GitHub Tag version
         id: get_version
@@ -126,3 +126,30 @@ jobs:
           body: |
             ${{ steps.read_release.outputs.RELEASE_BODY }}
           overwrite: true
+
+  Docker_Build:
+    name: Build and Release Docker
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        
+
+    - name: Build and Push latest image
+      run: |
+        ver=$(grep 'VERSION = ' src/classes/Changelog.py | awk -F'"' '{print $2}')
+        echo $ver
+        if [ -z "$ver" ]; then
+          ver="latest"
+        fi
+        docker build -t screeni-py:$ver .
+        docker tag screeni-py:$ver joshipranjal/screeni-py:$ver
+        docker push joshipranjal/screeni-py:$ver
+        docker tag screeni-py:$ver joshipranjal/screeni-py:latest
+        docker push joshipranjal/screeni-py:latest
